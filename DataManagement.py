@@ -22,7 +22,71 @@ def normalize(df, target_cols, min, max):
     return result
 
 
+def average_df(df, target_cols):
+    result = df[target_cols.copy()]
+    return result.mean(axis=1)
+
+
+def df_to_array(df, target_cols):
+    result = []
+    for column in df.columns:
+        if column in target_cols:
+            result.append(df[column])
+    return np.array(result)
+
+
+def train_text_X(data, percentage):
+    split = int(len(data) * percentage)
+    X, y = [], []
+    df = data
+    step_size = 1
+    for i in range(len(df)-step_size-1):
+        data = df[i:(i+step_size), 0]
+        X.append(data)
+        y.append(df[i + step_size, 0])
+    X, y = np.array(X), np.array(y)
+    X = np.reshape(X, (X.shape[0], 1, X.shape[1]))
+    return X[:split], X[split:]
+
+def to_1dimension(df, step_size):
+    X, y = [], []
+    for i in range(len(df)-step_size-1):
+        data = df[i:(i+step_size), 0]
+        X.append(data)
+        y.append(df[i + step_size, 0])
+    X, y = np.array(X), np.array(y)
+    X = np.reshape(X, (X.shape[0], 1, X.shape[1]))
+    return X, y
+
+def get_X(df):
+    step_size = 1
+    X = []
+    for i in range(len(df)-step_size-1):
+        data = df[i:(i+step_size), 0]
+        X.append(data)
+    X = np.array(X)
+    X = np.reshape(X, (X.shape[0], 1, X.shape[1]))
+    return X
+
+def get_Y(df):
+    step_size = 1
+    Y = []
+    for i in range(len(df) - step_size - 1):
+        data = df[i:(i + step_size), 0]
+        Y.append(df[i + step_size, 0])
+    Y = np.array(Y)
+    return Y
+
+def train_test_Y(data, percentage):
+    data = data.values
+    split = int(len(data) * percentage)
+    training = data[:split]
+    testing = data[split:]
+    return training, testing
+
+
 def create_training_sets(df, seq_len):
+    """Test for future implementations. Not used in the project."""
     valid_percentage = 0.10
     test_percentage = 0.10
 

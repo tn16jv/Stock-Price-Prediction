@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
 import os
 from DataManagement import *
 
@@ -17,8 +18,10 @@ plt.xlabel('Date')
 plt.ylabel('Average Day Price')
 #plt.show()
 
-
-norm_data = normalize(raw_data, ['Open', 'High', 'Low', 'Close'], -1, 1)
+avg_cost = raw_data.mean(axis = 1)
+scaler = MinMaxScaler(feature_range=(0,1))
+avg_cost = scaler.fit_transform(np.reshape(avg_cost.values, (len(avg_cost), 1)))
+norm_data = normalize(raw_data, ['Open', 'High', 'Low', 'Close'], 0, 1)
 norm_data = norm_data[['Open', 'High', 'Low', 'Close'].copy()]
 x_train, y_train, x_valid, y_valid, x_test, y_test = create_training_sets(norm_data, 40)
 print(x_train.shape)
@@ -35,12 +38,13 @@ model.add(tf.keras.layers.Dense(4, activation=tf.nn.relu))
 
 model.compile(optimizer="adam", loss="mean_squared_error")
 
-plt.clf()
-plt.plot(y_train)
-#plt.show()
-#model.fit(x_train, y_train, epochs=1)
-#test_acc = model.evaluate(x_test, y_test)
-#print('Test accuracy:', test_acc)
-#predictions = model.predict(x_test)
-#print(predictions[0])
+model.fit(x_train, y_train, epochs=10)
+test_acc = model.evaluate(x_test, y_test)
+print('Test accuracy:', test_acc)
+predictions = model.predict(x_test)
+predictions = scaler.inverse_transform(predictions)
+print(predictions)
+
+plt.plot(predictions)
+plt.show()
 
