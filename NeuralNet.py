@@ -18,7 +18,7 @@ plt.ylabel('Average Day Price')
 #plt.show()
 
 
-norm_data = normalize(raw_data, ['Open', 'High', 'Low', 'Close'])
+norm_data = normalize(raw_data, ['Open', 'High', 'Low', 'Close'], -1, 1)
 norm_data = norm_data[['Open', 'High', 'Low', 'Close'].copy()]
 x_train, y_train, x_valid, y_valid, x_test, y_test = create_training_sets(norm_data, 40)
 print(x_train.shape)
@@ -38,9 +38,9 @@ model.compile(optimizer="adam", loss="mean_squared_error")
 plt.clf()
 plt.plot(y_train)
 #plt.show()
-model.fit(x_train, y_train, epochs=1)
-test_acc = model.evaluate(x_test, y_test)
-print('Test accuracy:', test_acc)
-predictions = model.predict(x_test)
-print(predictions[0])
+#model.fit(x_train, y_train, epochs=1)
+#test_acc = model.evaluate(x_test, y_test)
+#print('Test accuracy:', test_acc)
+#predictions = model.predict(x_test)
+#print(predictions[0])
 

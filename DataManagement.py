@@ -1,9 +1,12 @@
 import numpy as np
 
 
-def normalize(df, target_cols):
+def normalize(df, target_cols, min, max):
     """
     Normalizes a Pandas dataframe values to the range of [-1, 1]
+    :param min: the inclusive minimum
+    :param max: the inclusive maximum
+    :return:
     :param df: Pandas dataframe or object
     :param target_cols: Array of strings that holds the headers to normalize
     :return: Normalized dataframe
@@ -14,8 +17,8 @@ def normalize(df, target_cols):
         if column in target_cols:
             max_value = df[column].max()
             min_value = df[column].min()
-            result[column] = (2 * (df[column] - min_value)
-                              / (max_value - min_value) - 1)
+            result[column] = ((max-min) * (df[column] - min_value)
+                              / (max_value - min_value) + min)
     return result
 
 
