@@ -24,12 +24,6 @@ avg_cost = scaler.fit_transform(np.reshape(avg_cost.values, (len(avg_cost), 1)))
 norm_data = normalize(raw_data, ['Open', 'High', 'Low', 'Close'], 0, 1)
 norm_data = norm_data[['Open', 'High', 'Low', 'Close'].copy()]
 x_train, y_train, x_valid, y_valid, x_test, y_test = create_training_sets(norm_data, 40)
-print(x_train.shape)
-print(y_train.shape)
-print(x_valid.shape)
-print(y_valid.shape)
-print(x_test.shape)
-print(y_test.shape)
 
 model = tf.keras.Sequential()
 model.add(tf.keras.layers.LSTM(20, input_shape=(39, 4), return_sequences=True))
@@ -39,12 +33,34 @@ model.add(tf.keras.layers.Dense(4, activation=tf.nn.relu))
 model.compile(optimizer="adam", loss="mean_squared_error")
 
 model.fit(x_train, y_train, epochs=10)
-test_acc = model.evaluate(x_test, y_test)
+test_acc = model.evaluate(x_train, y_train)
 print('Test accuracy:', test_acc)
 predictions = model.predict(x_test)
 predictions = scaler.inverse_transform(predictions)
 print(predictions)
 
-plt.plot(predictions)
+predictions = predictions[:,[1,2]]  # get only the high and low
+predictions_avg = np.mean(predictions, axis=1)
+true_price = ((raw_data['Low'] + raw_data['High']) / 2.0)[:len(predictions_avg)]
+#padded_pred = np.pad(predictions, (len(x_train) + len(x_valid), 0), 'constant')
+plt.clf()
+#plt.xticks(range(0, raw_data.shape[0], 500), raw_data['Date'].loc[::500], rotation=45)
+plt.plot(true_price, label='True Price')
+plt.plot(predictions_avg, label="Test Estimated")
+plt.legend()
+plt.show()
+
+
+predictions = model.predict(x_train)
+predictions = scaler.inverse_transform(predictions)
+print(predictions)
+
+predictions = predictions[:,[1,2]]  # get only the high and low
+predictions_avg = np.mean(predictions, axis=1)
+true_price = ((raw_data['Low'] + raw_data['High']) / 2.0)[:len(predictions_avg)]
+plt.clf()
+plt.plot(true_price, label='True Price')
+plt.plot(predictions_avg, label="Training Estimated")
+plt.legend()
 plt.show()
 
