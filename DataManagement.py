@@ -70,7 +70,27 @@ def train_test_Y(data, percentage):
     return training, testing
 
 
-def create_training_sets(df, seq_len, valid_percentage=0.10, test_percentage=0.10):
+def train_test_sets(df, seq_len, test_percentage=0.10):
+    data = []
+    df_data = df.values
+    for i in range(len(df_data) - seq_len):
+        data.append(df_data[i: i + seq_len])    # add in chunks of seq_len
+    data = np.array(data)
+
+    test_size = int(np.round(test_percentage * data.shape[0]))
+    train_size = data.shape[0] - test_size
+
+    # triple list indices for each dimension of the 3d arrays
+    x_train = data[:train_size, :-1,:]  # 1st dimension is train_size length, 2nd is total-1, and 3rd is all
+    y_train = data[:train_size, -1, :]  # 1st dimension gets train_size length, no 2nd dimension here, and 3rd is all
+
+    x_test = data[train_size:, :-1, :]
+    y_test = data[train_size:, -1, :]
+
+    return x_train, y_train, x_test, y_test
+
+
+def train_valid_test_sets(df, seq_len, valid_percentage=0.10, test_percentage=0.10):
     data = []
     df_data = df.values
     for i in range(len(df_data) - seq_len):
@@ -79,21 +99,16 @@ def create_training_sets(df, seq_len, valid_percentage=0.10, test_percentage=0.1
 
     valid_size = int(np.round(valid_percentage * data.shape[0]))
     test_size = int(np.round(test_percentage * data.shape[0]))
-    #train_size = data.shape[0] - (test_size + valid_size)
-    train_size = data.shape[0] - test_size
+    train_size = data.shape[0] - (test_size + valid_size)
 
     # triple list indices for each dimension of the 3d arrays
     x_train = data[:train_size, :-1,:]  # 1st dimension is train_size length, 2nd is total-1, and 3rd is all
     y_train = data[:train_size, -1, :]  # 1st dimension gets train_size length, no 2nd dimension here, and 3rd is all
 
-    #x_valid = data[train_size: train_size + valid_size, :-1, :]
-    #y_valid = data[train_size: train_size+valid_size, -1, :]
-    x_valid = []
-    y_valid = []
+    x_valid = data[train_size: train_size + valid_size, :-1, :]
+    y_valid = data[train_size: train_size+valid_size, -1, :]
 
-    #x_test = data[train_size + valid_size:, :-1, :]
-    #y_test = data[train_size + valid_size:, -1, :]
-    x_test = data[train_size:, :-1, :]
-    y_test = data[train_size:, -1, :]
+    x_test = data[train_size + valid_size:, :-1, :]
+    y_test = data[train_size + valid_size:, -1, :]
 
     return x_train, y_train, x_valid, y_valid, x_test, y_test

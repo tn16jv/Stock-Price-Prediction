@@ -27,7 +27,7 @@ scaler = MinMaxScaler(feature_range=(0,1))
 avg_cost = scaler.fit_transform(np.reshape(avg_cost.values, (len(avg_cost), 1)))
 norm_data = normalize(raw_data, ['Open', 'High', 'Low', 'Close'], 0, 1)
 norm_data = norm_data[['Open', 'High', 'Low', 'Close'].copy()]
-x_train, y_train, x_valid, y_valid, x_test, y_test = create_training_sets(norm_data, STRIDE)
+x_train, y_train, x_test, y_test = train_test_sets(norm_data, STRIDE)
 
 
 # Create the LSTM model
