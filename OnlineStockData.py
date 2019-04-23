@@ -1,7 +1,7 @@
 import pandas_datareader.data as pdr
 
 
-def get_stock_data(start, end):
+def get_stock_data(start=None, end=None):
     valid = False
     while not valid:
         try:
