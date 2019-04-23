@@ -11,11 +11,12 @@ from OnlineStockData import *
 EPOCHS = 10
 STRIDE = 40
 raw_path = 'amd.us.txt'
+chosen_stock = 'amd'
 start = datetime.datetime(1984, 1, 1)
 end = datetime.datetime.now()
 
 #raw_data = pd.read_csv(raw_path, delimiter=',', usecols=['Date', 'Open', 'High', 'Low', 'Close'])
-raw_data = get_stock_data(start, end)
+raw_data = get_stock_data(ticker=chosen_stock, start_date=start, end_date=end)
 raw_data.to_csv("stock_prices.csv")
 raw_data = pd.read_csv("stock_prices.csv", delimiter=',', usecols=['Date', 'Open', 'High', 'Low', 'Close'])
 print(raw_data.loc[0, :])  # first row and all columns
