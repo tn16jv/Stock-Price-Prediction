@@ -4,13 +4,20 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import os
+import datetime
 from DataManagement import *
+from OnlineStockData import *
 
 EPOCHS = 10
 STRIDE = 40
 raw_path = 'amd.us.txt'
+start = datetime.datetime(1984, 1, 1)
+end = datetime.datetime.now()
 
-raw_data = pd.read_csv(raw_path, delimiter=',', usecols=['Date', 'Open', 'High', 'Low', 'Close'])
+#raw_data = pd.read_csv(raw_path, delimiter=',', usecols=['Date', 'Open', 'High', 'Low', 'Close'])
+raw_data = get_stock_data(start, end)
+raw_data.to_csv("stock_prices.csv")
+raw_data = pd.read_csv("stock_prices.csv", delimiter=',', usecols=['Date', 'Open', 'High', 'Low', 'Close'])
 print(raw_data.loc[0, :])  # first row and all columns
 
 plt.plot(range(raw_data.shape[0]), (raw_data['Low'] + raw_data['High']) / 2.0)
@@ -18,7 +25,7 @@ plt.xticks(range(0, raw_data.shape[0], 500), raw_data['Date'].loc[::500], rotati
 plt.title('AMD Stock Price History')
 plt.xlabel('Date')
 plt.ylabel('Average Day Price')
-#plt.show()
+plt.show()
 
 
 # Normalize data and create training sets
