@@ -7,6 +7,7 @@ import os
 import datetime
 from DataManagement import *
 from OnlineStockData import *
+from Model import *
 
 EPOCHS = 10
 STRIDE = 40
@@ -39,10 +40,11 @@ x_train, y_train, x_test, y_test = train_test_sets(norm_data, STRIDE)
 
 
 # Create the LSTM model
-model = tf.keras.Sequential()
-model.add(tf.keras.layers.LSTM(20, input_shape=(STRIDE-1, 4), return_sequences=True))
-model.add(tf.keras.layers.LSTM(20))
-model.add(tf.keras.layers.Dense(4, activation=tf.nn.relu))
+#model = tf.keras.Sequential()
+#model.add(tf.keras.layers.LSTM(20, input_shape=(STRIDE-1, 4), return_sequences=True))
+#model.add(tf.keras.layers.LSTM(20))
+#model.add(tf.keras.layers.Dense(4, activation=tf.nn.relu))
+model = create_model(stride=STRIDE)
 
 model.compile(optimizer="adam", loss="mean_squared_error", metrics=['accuracy'])
 
